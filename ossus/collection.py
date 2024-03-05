@@ -31,11 +31,12 @@ class Collection:
         if "id" not in document:
             document["id"] = uuid.uuid4().hex
         self.connection.execute(
-            f"INSERT INTO {self.collection_name} (data) VALUES (json(?))",
+            f"INSERT INTO {self.collection_name} (data) VALUES (json(?)) RETURNING data",
             [json.dumps(document)],
         )
         self.connection.commit()
-        return document["id"]
+        inserted_document = self.connection.fetchone()
+        return json.loads(inserted_document[0])
 
     def insert_many(self, documents: list):
         documents_as_json = [(json.dumps(doc),) for doc in documents]
@@ -91,7 +92,8 @@ class Collection:
             return json.loads(row[0])
         return None
 
-    from typing import Optional
+    def get(self, document_id) -> Optional[Dict]:
+        return self.find_one(Query.eq("id", document_id))
 
     def update(
         self, query: Optional[Query] = None, *operations: UpdateOperation
@@ -240,7 +242,15 @@ class Collection:
         self.connection.commit()
 
     def drop_all_indexes(self):
-        indexes = self.get_indexes()
+        self.connection.execute(
+            f"DELETE FROM sqlite_master WHERE type='index' AND tbl_name='{self.collection_name}'"
+        )
+
+    def sync_indexes(self, indexes: List[Index]):
+        existing_indexes = self.get_indexes()
         for index in indexes:
-            self.drop_index(index)
-        self.connection.commit()
+            if index not in existing_indexes:
+                self.create_index(index)
+        for index in existing_indexes:
+            if index not in indexes:
+                self.drop_index(index)
