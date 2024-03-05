@@ -12,12 +12,19 @@ from typing import (
     Mapping,
     MutableMapping,
     Optional,
-    Tuple, Set,
+    Tuple,
+    Set,
 )
+from typing import TYPE_CHECKING
+from uuid import UUID
 
 import pydantic
+from pydantic import SecretStr
 
-import ossus
+import pear
+
+if TYPE_CHECKING:
+    from pear import Document
 
 SingleArgCallable = Callable[[Any], Any]
 DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
@@ -34,7 +41,18 @@ DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
     datetime.date: lambda d: d.isoformat(),
     datetime.timedelta: operator.methodcaller("total_seconds"),
     Enum: operator.attrgetter("value"),
+    UUID: str,
+    bytes: lambda b: b.decode(),
+    SecretStr: lambda s: s.get_secret_value(),
 }
+
+SCALAR_TYPES = (
+    type(None),
+    str,
+    int,
+    float,
+    bool,
+)
 
 
 @dc.dataclass
@@ -50,16 +68,12 @@ class Encoder:
     to_db: bool = False
     keep_nulls: bool = True
 
-    def _encode_document(self, obj: "beanie.Document") -> Mapping[str, Any]:
-        obj.parse_store()
-        settings = obj.get_settings()
+    def _encode_document(self, obj: "Document") -> Mapping[str, Any]:
         obj_dict = {}
-        if obj._class_id:
-            obj_dict[settings.class_id] = obj._class_id
 
         sub_encoder = Encoder(
             # don't propagate self.exclude to subdocuments
-            custom_encoders=settings.json_encoders,
+            custom_encoders=obj.pear_json_encoders,
             to_db=self.to_db,
             keep_nulls=self.keep_nulls,
         )
@@ -73,11 +87,14 @@ class Encoder:
             if encoder is not None:
                 return encoder(obj)
 
+        if isinstance(obj, SCALAR_TYPES):
+            return obj
+
         encoder = _get_encoder(obj, DEFAULT_CUSTOM_ENCODERS)
         if encoder is not None:
             return encoder(obj)
 
-        if isinstance(obj, ossus.Document):
+        if isinstance(obj, pear.Document):
             return self._encode_document(obj)
         if isinstance(obj, pydantic.RootModel):
             return self.encode(obj.root)
@@ -89,13 +106,14 @@ class Encoder:
                 key if isinstance(key, Enum) else str(key): self.encode(value)
                 for key, value in obj.items()
             }
-        if isinstance(obj, Iterable):
+        if isinstance(obj, Iterable) and not isinstance(obj, (str, bytes)):
+            print(obj)
             return [self.encode(value) for value in obj]
 
         raise ValueError(f"Cannot encode {obj!r}")
 
     def _iter_model_items(
-            self, obj: pydantic.BaseModel
+        self, obj: pydantic.BaseModel
     ) -> Iterable[Tuple[str, Any]]:
         exclude, keep_nulls = self.exclude, self.keep_nulls
         for key, value in obj.__iter__():
@@ -107,7 +125,7 @@ class Encoder:
 
 
 def _get_encoder(
-        obj: Any, custom_encoders: Mapping[type, SingleArgCallable]
+    obj: Any, custom_encoders: Mapping[type, SingleArgCallable]
 ) -> Optional[SingleArgCallable]:
     encoder = custom_encoders.get(type(obj))
     if encoder is not None:
@@ -119,16 +137,24 @@ def _get_encoder(
 
 
 def get_dict(
-        document: "Document",
-        to_db: bool = False,
-        exclude: Optional[Set[str]] = None,
-        keep_nulls: bool = True,
-):
+    document: "Document",
+    to_db: bool = False,
+    exclude: Optional[Set[str]] = None,
+    keep_nulls: bool = True,
+) -> Mapping[str, Any]:
     if exclude is None:
         exclude = set()
     if document.id is None:
-        exclude.add("_id")
-    if not document.get_settings().use_revision:
-        exclude.add("revision_id")
+        exclude.add("id")
     encoder = Encoder(exclude=exclude, to_db=to_db, keep_nulls=keep_nulls)
     return encoder.encode(document)
+
+
+def encode(
+    obj: Any,
+    exclude: Optional[Set[str]] = None,
+    to_db: bool = False,
+    keep_nulls: bool = True,
+) -> Any:
+    encoder = Encoder(exclude=exclude, to_db=to_db, keep_nulls=keep_nulls)
+    return encoder.encode(obj)

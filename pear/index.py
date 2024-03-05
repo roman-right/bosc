@@ -4,10 +4,13 @@ from enum import Enum
 
 class IndexType(str, Enum):
     PATH = "path"
+    UNIQUE = "unique"
 
 
 class Index:
-    def __init__(self, index_type: IndexType, value, name=None):
+    def __init__(
+        self, value, index_type: IndexType = IndexType.PATH, name=None
+    ):
         self.index_type = index_type
         self.value = value
         self.name = name or self.generate_name()
@@ -29,6 +32,8 @@ class Index:
 
     @staticmethod
     def extract_type(sql: str) -> IndexType:
+        if "UNIQUE" in sql:
+            return IndexType.UNIQUE
         return IndexType.PATH
 
     @staticmethod

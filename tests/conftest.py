@@ -1,6 +1,6 @@
 import pytest
 
-from ossus.database import Database
+from pear.database import Database
 
 
 @pytest.fixture
@@ -19,4 +19,4 @@ def cleanup(db):
 
 @pytest.fixture
 def conn():
-    return Database("test_db").conn
+    return Database("test_db").connection

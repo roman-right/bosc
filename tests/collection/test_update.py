@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from ossus.queries.find.comparison import Eq
-from ossus.queries.update.values import Set, Now, RemoveField, Inc
+from pear.query.find.comparison import Eq
+from pear.query.update.values import Set, Now, RemoveField, Inc
 
 
 class TestUpdate:

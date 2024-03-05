@@ -1,4 +1,4 @@
-from ossus.queries.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte, In
+from pear.query.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte
 
 
 class ExpressionField:
@@ -6,7 +6,7 @@ class ExpressionField:
         self.attr_name = attr_name
 
     def __getattr__(self, item):
-        if item.endswith('__') and item.startswith('__'):
+        if item.endswith("__") and item.startswith("__"):
             raise AttributeError
         return ExpressionField(f"{self.attr_name}.{item}")
 
@@ -30,7 +30,3 @@ class ExpressionField:
 
     def __le__(self, other):
         return Lte(self.attr_name, other)
-
-    def __contains__(self, other):
-        return In(self.attr_name, other)
-
