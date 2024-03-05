@@ -1,5 +1,4 @@
 import json
-import re
 import uuid
 from enum import Enum
 from typing import Optional, Dict, List, Union
@@ -21,30 +20,43 @@ class Collection:
         self._create_table()
 
     def _create_table(self):
-        self.connection.execute(f'CREATE TABLE IF NOT EXISTS {self.collection_name} (id INTEGER PRIMARY KEY, data JSON)')
+        self.connection.execute(
+            f"CREATE TABLE IF NOT EXISTS {self.collection_name} (id INTEGER PRIMARY KEY, data JSON)"
+        )
         self.connection.commit()
         self.create_index(Index(IndexType.PATH, "id"))
 
     def insert(self, document: dict):
         # if there is no id, it will be auto-generated
-        if 'id' not in document:
-            document['id'] = uuid.uuid4().hex
-        self.connection.execute(f'INSERT INTO {self.collection_name} (data) VALUES (json(?))', [json.dumps(document)])
+        if "id" not in document:
+            document["id"] = uuid.uuid4().hex
+        self.connection.execute(
+            f"INSERT INTO {self.collection_name} (data) VALUES (json(?))",
+            [json.dumps(document)],
+        )
         self.connection.commit()
-        return document['id']
+        return document["id"]
 
     def insert_many(self, documents: list):
         documents_as_json = [(json.dumps(doc),) for doc in documents]
-        self.connection.executemany(f'INSERT INTO {self.collection_name} (data) VALUES (json(?))', documents_as_json)
+        self.connection.executemany(
+            f"INSERT INTO {self.collection_name} (data) VALUES (json(?))",
+            documents_as_json,
+        )
         self.connection.commit()
 
-    def find(self, query: Optional[Query] = None, order_by: str = None,
-             order_direction: OrderDirection = OrderDirection.ASC) -> List[
-        Dict]:
+    def find(
+        self,
+        query: Optional[Query] = None,
+        order_by: str = None,
+        order_direction: OrderDirection = OrderDirection.ASC,
+    ) -> List[Dict]:
         cursor = self.connection.cursor()
         if query:
             where_clause, query_val = query.to_sql()
-            sql = f"SELECT data FROM {self.collection_name} WHERE {where_clause}"
+            sql = (
+                f"SELECT data FROM {self.collection_name} WHERE {where_clause}"
+            )
         else:
             sql = f"SELECT data FROM {self.collection_name}"
             query_val = ()
@@ -53,14 +65,19 @@ class Collection:
         cursor.execute(sql, query_val)
         return [json.loads(row[0]) for row in cursor.fetchall()]
 
-    def find_one(self, query: Optional[Query] = None, order_by: str = None,
-                 order_direction: OrderDirection = OrderDirection.ASC) -> \
-            Optional[Dict]:
+    def find_one(
+        self,
+        query: Optional[Query] = None,
+        order_by: str = None,
+        order_direction: OrderDirection = OrderDirection.ASC,
+    ) -> Optional[Dict]:
         cursor = self.connection.cursor()
 
         if query:
             where_clause, query_params = query.to_sql()
-            sql = f"SELECT data FROM {self.collection_name} WHERE {where_clause}"
+            sql = (
+                f"SELECT data FROM {self.collection_name} WHERE {where_clause}"
+            )
         else:
             sql = f"SELECT data FROM {self.collection_name}"
             query_params = []
@@ -76,7 +93,9 @@ class Collection:
 
     from typing import Optional
 
-    def update(self, query: Optional[Query] = None, *operations: UpdateOperation):
+    def update(
+        self, query: Optional[Query] = None, *operations: UpdateOperation
+    ):
         cursor = self.connection.cursor()
 
         # Initialize where_clause and query_params
@@ -108,8 +127,13 @@ class Collection:
             cursor.execute(sql, update_params)
         self.connection.commit()
 
-    def update_one(self, query: Optional[Query] = None, *operations: UpdateOperation, order_by: str = None,
-                   order_direction: str = "ASC"):
+    def update_one(
+        self,
+        query: Optional[Query] = None,
+        *operations: UpdateOperation,
+        order_by: str = None,
+        order_direction: str = "ASC",
+    ):
         cursor = self.connection.cursor()
 
         # Initialize where_clause and query_params
@@ -154,8 +178,12 @@ class Collection:
         cursor.execute(sql, query_val)
         self.connection.commit()
 
-    def delete_one(self, query: Optional[Query] = None, order_by: str = None,
-                   order_direction: OrderDirection = OrderDirection.ASC):
+    def delete_one(
+        self,
+        query: Optional[Query] = None,
+        order_by: str = None,
+        order_direction: OrderDirection = OrderDirection.ASC,
+    ):
         cursor = self.connection.cursor()
         if query:
             where_clause, query_val = query.to_sql()
@@ -177,7 +205,8 @@ class Collection:
         indexes = []
         cursor = self.connection.cursor()
         cursor.execute(
-            f"SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='{self.collection_name}' AND sql NOT NULL order by name")
+            f"SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='{self.collection_name}' AND sql NOT NULL order by name"
+        )
         for name, sql in cursor.fetchall():
             index_type = Index.extract_type(sql)
             index_value = Index.extract_value(sql)

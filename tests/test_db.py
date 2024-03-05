@@ -26,7 +26,9 @@ class TestMiniMongo:
         assert result[0]["name"] == "John"
 
     def test_find_order_by(self, db):
-        db.test.insert_many([{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}])
+        db.test.insert_many(
+            [{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}]
+        )
         result = db.test.find(None, order_by="name", order="DESC")
         assert len(result) == 3
         assert result[0]["name"] == "Linda"
@@ -34,7 +36,9 @@ class TestMiniMongo:
         assert result[2]["name"] == "Jane"
 
     def test_find_or(self, db):
-        db.test.insert_many([{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}])
+        db.test.insert_many(
+            [{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}]
+        )
         query = Or(Eq("name", "John"), Eq("name", "Jane"))
         result = db.test.find(query, order_by="name")
         assert len(result) == 2
@@ -42,7 +46,9 @@ class TestMiniMongo:
         assert result[1]["name"] == "John"
 
     def test_find_one(self, db):
-        db.test.insert_many([{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}])
+        db.test.insert_many(
+            [{"name": "John"}, {"name": "Jane"}, {"name": "Linda"}]
+        )
         query = Eq("name", "John")
         result = db.test.find_one(query)
         assert result["name"] == "John"

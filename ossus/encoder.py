@@ -12,12 +12,17 @@ from typing import (
     Mapping,
     MutableMapping,
     Optional,
-    Tuple, Set,
+    Tuple,
+    Set,
 )
+from typing import TYPE_CHECKING
 
 import pydantic
 
 import ossus
+
+if TYPE_CHECKING:
+    from ossus import Document
 
 SingleArgCallable = Callable[[Any], Any]
 DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
@@ -50,7 +55,7 @@ class Encoder:
     to_db: bool = False
     keep_nulls: bool = True
 
-    def _encode_document(self, obj: "beanie.Document") -> Mapping[str, Any]:
+    def _encode_document(self, obj: "Document") -> Mapping[str, Any]:
         obj.parse_store()
         settings = obj.get_settings()
         obj_dict = {}
@@ -95,7 +100,7 @@ class Encoder:
         raise ValueError(f"Cannot encode {obj!r}")
 
     def _iter_model_items(
-            self, obj: pydantic.BaseModel
+        self, obj: pydantic.BaseModel
     ) -> Iterable[Tuple[str, Any]]:
         exclude, keep_nulls = self.exclude, self.keep_nulls
         for key, value in obj.__iter__():
@@ -107,7 +112,7 @@ class Encoder:
 
 
 def _get_encoder(
-        obj: Any, custom_encoders: Mapping[type, SingleArgCallable]
+    obj: Any, custom_encoders: Mapping[type, SingleArgCallable]
 ) -> Optional[SingleArgCallable]:
     encoder = custom_encoders.get(type(obj))
     if encoder is not None:
@@ -119,10 +124,10 @@ def _get_encoder(
 
 
 def get_dict(
-        document: "Document",
-        to_db: bool = False,
-        exclude: Optional[Set[str]] = None,
-        keep_nulls: bool = True,
+    document: "Document",
+    to_db: bool = False,
+    exclude: Optional[Set[str]] = None,
+    keep_nulls: bool = True,
 ):
     if exclude is None:
         exclude = set()

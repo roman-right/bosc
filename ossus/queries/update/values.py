@@ -16,7 +16,10 @@ class Inc(UpdateOperation):
         self.increment_by = increment_by
 
     def to_sql_update(self):
-        return f"json_set(data, '$.{self.field}', json_extract(data, '$.{self.field}') + ?)", [self.increment_by]
+        return (
+            f"json_set(data, '$.{self.field}', json_extract(data, '$.{self.field}') + ?)",
+            [self.increment_by],
+        )
 
 
 class Now(UpdateOperation):
@@ -24,7 +27,10 @@ class Now(UpdateOperation):
         self.field = field
 
     def to_sql_update(self):
-        return f"json_set(data, '$.{self.field}', CAST(strftime('%s', 'now') AS INTEGER))", []
+        return (
+            f"json_set(data, '$.{self.field}', CAST(strftime('%s', 'now') AS INTEGER))",
+            [],
+        )
 
 
 class RemoveField(UpdateOperation):

@@ -3,12 +3,7 @@ from ossus.index import Index, IndexType
 
 class TestIndexes:
     def test_create_index_by_path(self, collection, conn):
-        collection.create_index(
-            Index(
-                IndexType.PATH,
-                "address.city"
-            )
-        )
+        collection.create_index(Index(IndexType.PATH, "address.city"))
         indxes = collection.get_indexes()
         assert len(indxes) == 2
         assert indxes[0].name == "idx_path_address_city"
@@ -24,12 +19,7 @@ class TestIndexes:
         )
 
     def test_drop_index_by_name(self, collection, conn):
-        collection.create_index(
-            Index(
-                IndexType.PATH,
-                "address.city"
-            )
-        )
+        collection.create_index(Index(IndexType.PATH, "address.city"))
         indxes = collection.get_indexes()
         assert len(indxes) == 2
 
@@ -48,12 +38,7 @@ class TestIndexes:
         )
 
     def test_drop_index_by_index(self, collection, conn):
-        collection.create_index(
-            Index(
-                IndexType.PATH,
-                "address.city"
-            )
-        )
+        collection.create_index(Index(IndexType.PATH, "address.city"))
         indxes = collection.get_indexes()
         assert len(indxes) == 2
 
@@ -76,12 +61,7 @@ class TestIndexes:
         )
 
     def test_sync_indexes(self, collection, conn):
-        collection.create_index(
-            Index(
-                IndexType.PATH,
-                "address.city"
-            )
-        )
+        collection.create_index(Index(IndexType.PATH, "address.city"))
         indxes = collection.get_indexes()
         assert len(indxes) == 2
 

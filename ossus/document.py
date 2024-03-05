@@ -14,6 +14,5 @@ class CombinedMeta(BaseModelMetaclass):
 
 # Adjusting MyClass to use the combined metaclass
 class Document(BaseModel, metaclass=CombinedMeta):
-
     def insert(self, db):
         db.insert(self)
