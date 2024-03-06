@@ -12,6 +12,12 @@ class OrderDirection(str, Enum):
     DESC = "DESC"
 
 
+class OnConflict(str, Enum):
+    REPLACE = "REPLACE"
+    IGNORE = "IGNORE"
+    ABORT = "ABORT"
+
+
 class Collection:
     def __init__(self, collection_name, connection, database):
         self.connection = connection
@@ -26,14 +32,27 @@ class Collection:
         self.connection.commit()
         self.create_index(Index(IndexType.PATH, "id"))
 
-    def insert(self, document: dict):
+    def insert(
+        self, document: dict, on_conflict: OnConflict = OnConflict.ABORT
+    ) -> Dict:
         # if there is no id, it will be auto-generated
         if "id" not in document:
             document["id"] = uuid.uuid4().hex
-        self.connection.execute(
-            f"INSERT INTO {self.collection_name} (data) VALUES (json(?)) RETURNING data",
-            [json.dumps(document)],
-        )
+        if on_conflict != OnConflict.ABORT:
+            self.connection.execute(
+                f"INSERT INTO {self.collection_name} (data) "
+                f"VALUES (json(?)) "
+                f"ON CONFLICT({on_conflict}) "
+                f"RETURNING data",
+                [json.dumps(document)],
+            )
+        else:
+            self.connection.execute(
+                f"INSERT INTO {self.collection_name} (data) "
+                f"VALUES (json(?)) "
+                f"RETURNING data",
+                [json.dumps(document)],
+            )
         self.connection.commit()
         inserted_document = self.connection.fetchone()
         return json.loads(inserted_document[0])
@@ -94,6 +113,17 @@ class Collection:
 
     def get(self, document_id) -> Optional[Dict]:
         return self.find_one(Query.eq("id", document_id))
+
+    def count(self, query: Optional[Query] = None) -> int:
+        cursor = self.connection.cursor()
+        if query:
+            where_clause, query_val = query.to_sql()
+            sql = f"SELECT COUNT(*) FROM {self.collection_name} WHERE {where_clause}"
+        else:
+            sql = f"SELECT COUNT(*) FROM {self.collection_name}"
+            query_val = ()
+        cursor.execute(sql, query_val)
+        return cursor.fetchone()[0]
 
     def update(
         self, query: Optional[Query] = None, *operations: UpdateOperation
