@@ -4,6 +4,7 @@ from enum import Enum
 
 class IndexType(str, Enum):
     PATH = "path"
+    UNIQUE = "unique"
 
 
 class Index:
@@ -29,6 +30,8 @@ class Index:
 
     @staticmethod
     def extract_type(sql: str) -> IndexType:
+        if "UNIQUE" in sql:
+            return IndexType.UNIQUE
         return IndexType.PATH
 
     @staticmethod

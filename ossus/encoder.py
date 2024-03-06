@@ -16,6 +16,7 @@ from typing import (
     Set,
 )
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 import pydantic
 
@@ -39,7 +40,17 @@ DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
     datetime.date: lambda d: d.isoformat(),
     datetime.timedelta: operator.methodcaller("total_seconds"),
     Enum: operator.attrgetter("value"),
+    UUID: str,
+    bytes: lambda b: b.decode(),
 }
+
+SCALAR_TYPES = (
+    type(None),
+    str,
+    int,
+    float,
+    bool,
+)
 
 
 @dc.dataclass
@@ -56,15 +67,11 @@ class Encoder:
     keep_nulls: bool = True
 
     def _encode_document(self, obj: "Document") -> Mapping[str, Any]:
-        obj.parse_store()
-        settings = obj.get_settings()
         obj_dict = {}
-        if obj._class_id:
-            obj_dict[settings.class_id] = obj._class_id
 
         sub_encoder = Encoder(
             # don't propagate self.exclude to subdocuments
-            custom_encoders=settings.json_encoders,
+            custom_encoders=obj.pear_json_encoders,
             to_db=self.to_db,
             keep_nulls=self.keep_nulls,
         )
@@ -77,6 +84,9 @@ class Encoder:
             encoder = _get_encoder(obj, self.custom_encoders)
             if encoder is not None:
                 return encoder(obj)
+
+        if isinstance(obj, SCALAR_TYPES):
+            return obj
 
         encoder = _get_encoder(obj, DEFAULT_CUSTOM_ENCODERS)
         if encoder is not None:
@@ -94,7 +104,8 @@ class Encoder:
                 key if isinstance(key, Enum) else str(key): self.encode(value)
                 for key, value in obj.items()
             }
-        if isinstance(obj, Iterable):
+        if isinstance(obj, Iterable) and not isinstance(obj, (str, bytes)):
+            print(obj)
             return [self.encode(value) for value in obj]
 
         raise ValueError(f"Cannot encode {obj!r}")
@@ -132,8 +143,6 @@ def get_dict(
     if exclude is None:
         exclude = set()
     if document.id is None:
-        exclude.add("_id")
-    if not document.get_settings().use_revision:
-        exclude.add("revision_id")
+        exclude.add("id")
     encoder = Encoder(exclude=exclude, to_db=to_db, keep_nulls=keep_nulls)
     return encoder.encode(document)

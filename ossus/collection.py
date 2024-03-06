@@ -1,10 +1,14 @@
 import json
+import logging
 import uuid
 from enum import Enum
 from typing import Optional, Dict, List, Union
 
 from ossus.index import Index, IndexType
 from ossus.queries.base import Query, UpdateOperation
+from ossus.queries.find.comparison import Eq
+
+logger = logging.getLogger(__name__)
 
 
 class OrderDirection(str, Enum):
@@ -15,7 +19,7 @@ class OrderDirection(str, Enum):
 class OnConflict(str, Enum):
     REPLACE = "REPLACE"
     IGNORE = "IGNORE"
-    ABORT = "ABORT"
+    RAISE = "RAISE"
 
 
 class Collection:
@@ -30,31 +34,45 @@ class Collection:
             f"CREATE TABLE IF NOT EXISTS {self.collection_name} (id INTEGER PRIMARY KEY, data JSON)"
         )
         self.connection.commit()
-        self.create_index(Index(IndexType.PATH, "id"))
+        self.create_index(Index(IndexType.UNIQUE, "id"))
 
     def insert(
-        self, document: dict, on_conflict: OnConflict = OnConflict.ABORT
+        self, document: dict, on_conflict: OnConflict = OnConflict.RAISE
     ) -> Dict:
         # if there is no id, it will be auto-generated
         if "id" not in document:
             document["id"] = uuid.uuid4().hex
-        if on_conflict != OnConflict.ABORT:
-            self.connection.execute(
-                f"INSERT INTO {self.collection_name} (data) "
+
+        if on_conflict == OnConflict.REPLACE:
+            result = self.connection.execute(
+                f"INSERT OR REPLACE INTO {self.collection_name} (data) "
                 f"VALUES (json(?)) "
-                f"ON CONFLICT({on_conflict}) "
+                f"RETURNING data",
+                [json.dumps(document)],
+            )
+
+        elif on_conflict == OnConflict.IGNORE:
+            result = self.connection.execute(
+                f"INSERT OR IGNORE INTO {self.collection_name} (data) "
+                f"VALUES (json(?)) "
                 f"RETURNING data",
                 [json.dumps(document)],
             )
         else:
-            self.connection.execute(
+            result = self.connection.execute(
                 f"INSERT INTO {self.collection_name} (data) "
                 f"VALUES (json(?)) "
                 f"RETURNING data",
                 [json.dumps(document)],
             )
+        inserted_document = result.fetchone()
         self.connection.commit()
-        inserted_document = self.connection.fetchone()
+        if inserted_document is None and on_conflict == OnConflict.IGNORE:
+            logger.warning(
+                f"As the document with id {document['id']} already exists and on_conflict is set to IGNORE, "
+                f"the document was not inserted. Returning the existing document. The operation is not atomic."
+            )
+            return self.get(document["id"])
         return json.loads(inserted_document[0])
 
     def insert_many(self, documents: list):
@@ -112,7 +130,7 @@ class Collection:
         return None
 
     def get(self, document_id) -> Optional[Dict]:
-        return self.find_one(Query.eq("id", document_id))
+        return self.find_one(Eq("id", document_id))
 
     def count(self, query: Optional[Query] = None) -> int:
         cursor = self.connection.cursor()
@@ -252,10 +270,8 @@ class Collection:
 
         if index.index_type == IndexType.PATH:
             index_sql = f"CREATE INDEX IF NOT EXISTS {index_name_quoted} ON {collection_name_quoted} (json_extract(data, '$.{index.value}'))"
-        elif index.index_type == IndexType.PARTIAL:
-            index_sql = f"CREATE INDEX IF NOT EXISTS {index_name_quoted} ON {collection_name_quoted} (json_extract(data, '$.id')) WHERE {index.value}"
-        else:
-            index_sql = f"CREATE INDEX IF NOT EXISTS {index_name_quoted} ON {collection_name_quoted} ({index.value})"
+        elif index.index_type == IndexType.UNIQUE:
+            index_sql = f"CREATE UNIQUE INDEX IF NOT EXISTS {index_name_quoted} ON {collection_name_quoted} (json_extract(data, '$.{index.value}'))"
 
         self.connection.execute(index_sql)
         self.connection.commit()

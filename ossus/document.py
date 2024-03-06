@@ -5,6 +5,7 @@ from pydantic import BaseModel, UUID4, Field
 
 from ossus.collection import Collection, OnConflict
 from ossus.database import Database
+from ossus.encoder import get_dict
 from ossus.fields import ExpressionField
 from ossus.index import Index
 from ossus.queries.find.comparison import Eq
@@ -23,29 +24,31 @@ class CombinedMeta(BaseModelMetaclass):
 # Adjusting MyClass to use the combined metaclass
 class Document(BaseModel, metaclass=CombinedMeta):
     id: UUID4 = Field(default_factory=uuid4)
-    _indexes: ClassVar[List[Index]] = Field(default_factory=list)
-    _database_path: ClassVar[Optional[str]] = None
-    _database: ClassVar[Optional[Database]] = None
-    _collection: ClassVar[Optional[str]] = None
+    pear_indexes: ClassVar[List[Index]] = Field(default_factory=list)
+    pear_database_path: ClassVar[Optional[str]] = None
+    pear_database: ClassVar[Optional[Database]] = None
+    pear_collection: ClassVar[Optional[str]] = None
+    pear_json_encoders: ClassVar[Optional[dict]] = None
 
     @classmethod
     def get_collection(cls) -> Collection:
-        if cls._collection is None:
+        if cls.pear_collection is None:
             return cls.get_database()[cls.__class__.__name__]
-        return cls.get_database()[cls._collection]
+        return cls.get_database()[cls.pear_collection]
 
     @classmethod
     def get_database(cls) -> Database:
-        if cls._database is None:
-            if cls._database_path is None:
+        if cls.pear_database is None:
+            if cls.pear_database_path is None:
                 raise ValueError("Database path is not set")
-            cls._database = Database(cls._database_path)
-        return cls._database
+            cls.pear_database = Database(cls.pear_database_path)
+        return cls.pear_database
 
     # ENTITY METHODS
 
-    def insert(self, on_conflict: OnConflict = OnConflict.ABORT):
-        result = self.get_collection().insert(self, on_conflict)
+    def insert(self, on_conflict: OnConflict = OnConflict.RAISE):
+        document_data = get_dict(self)
+        result = self.get_collection().insert(document_data, on_conflict)
         self.id = result["id"]
         return self
 

@@ -13,8 +13,8 @@ def cleanup(db):
     db.drop_all_collections()
     db.drop_all_indexes()
     yield
-    db.drop_all_collections()
-    db.drop_all_indexes()
+    # db.drop_all_collections()
+    # db.drop_all_indexes()
 
 
 @pytest.fixture
