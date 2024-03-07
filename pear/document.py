@@ -1,7 +1,7 @@
-from typing import ClassVar, Optional, List, TypeVar
+from typing import ClassVar, List, Optional, TypeVar
 from uuid import uuid4
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 
 from pear.collection import Collection, OnConflict, OrderDirection
 from pear.database import Database

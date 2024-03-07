@@ -5,6 +5,7 @@ import operator
 import pathlib
 from enum import Enum
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Container,
@@ -12,10 +13,9 @@ from typing import (
     Mapping,
     MutableMapping,
     Optional,
-    Tuple,
     Set,
+    Tuple,
 )
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pydantic

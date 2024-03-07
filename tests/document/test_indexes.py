@@ -1,5 +1,4 @@
-from pear import Document
-from pear import Index, IndexType
+from pear import Document, Index, IndexType
 
 
 class Sample(Document):

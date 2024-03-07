@@ -3,7 +3,7 @@ import logging
 import uuid
 from contextlib import contextmanager
 from enum import Enum
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from pear.index import Index, IndexType
 from pear.query.base import Query, UpdateOperation

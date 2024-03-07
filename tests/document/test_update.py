@@ -1,5 +1,5 @@
-from tests.document.models import Sample
 from pear import Set
+from tests.document.models import Sample
 
 
 class TestUpdate:

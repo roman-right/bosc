@@ -1,4 +1,4 @@
-from pear.query.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte
+from pear.query.find.comparison import Eq, Gt, Gte, Lt, Lte, Neq
 
 
 class ExpressionField:
