@@ -123,7 +123,8 @@ This will create indexes on the `name` and `age` fields of the `User` documents,
 Leverage the full power of queries with complex conditions and ordering.
 
 ```python
-from bosc import And, Or, Eq, Gt
+from bosc import And, Or
+from bosc import OrderDirection
 
 # Find users named John Doe over 30 years old
 users = User.find(And(User.name == "John Doe", User.age > 30))
