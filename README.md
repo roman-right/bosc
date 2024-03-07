@@ -1,8 +1,9 @@
-![Bosc](logo/big.svg)
+[![Bosc](logo/big.svg)](https://raw.githubusercontent.com/roman-right/bosc/main/logo/big.svg)
 
 # Bosc
 
-## Introduction
+[![pypi](https://img.shields.io/pypi/v/bosc.svg)](https://pypi.python.org/pypi/bosc)
+
 Bosc is a document store that provides an easy, Pythonic interface for handling documents stored on the local file system. It utilizes the full power of SQLite for storing and querying documents and employs Pydantic as the parsing and validation engine, ensuring it works seamlessly within the modern Python ecosystem, including FastAPI.
 
 
@@ -11,9 +12,9 @@ Bosc is a document store that provides an easy, Pythonic interface for handling 
 ## Installation
 Before you begin, ensure you have Python installed on your system. This document store requires Python 3.8 or newer.
 
-To use the Bosc Document Store, you'll first need to include it in your Python project. If the Bosc package is available via a package manager (like pip), you can install it using:
+You can install Bosc using pip:
 
-```
+```shell
 pip install bosc
 ```
 
@@ -100,12 +101,14 @@ User.delete_many(User.name == "Alice")
 To improve query performance, you can define indexes on your document fields.
 
 ```python
+from bosc import Document, Index, IndexType
+
 class User(Document):
     name: str
     age: int
 
     bosc_indexes = [
-        Index("name", IndexType.PATH),
+        Index("name", IndexType.UNIQUE),
         Index("age", IndexType.PATH),
     ]
     bosc_database_path = "my_database.db"
