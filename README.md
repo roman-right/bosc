@@ -1,3 +1,5 @@
+![Pear](logo/big.svg)
+
 # Pear Document Store Usage Guide
 
 ## Introduction
