@@ -8,6 +8,7 @@ from bosc.database import Database
 from bosc.encoder import get_dict
 from bosc.fields import ExpressionField
 from bosc.index import Index, IndexType
+from bosc.query.base import Query, UpdateOperation
 from bosc.query.find.comparison import Eq
 from bosc.query.find.logical import And
 
@@ -26,17 +27,17 @@ class CombinedMeta(BaseModelMetaclass):
 # Adjusting MyClass to use the combined metaclass
 class Document(BaseModel, metaclass=CombinedMeta):
     id: UUID4 = Field(default_factory=uuid4)
-    bosc_indexes: ClassVar[List[Index]] = Field(default_factory=list)
     bosc_database_path: ClassVar[Optional[str]] = None
-    bosc_database: ClassVar[Optional[Database]] = None
-    bosc_collection: ClassVar[Optional[str]] = None
+    bosc_collection_name: ClassVar[Optional[str]] = None
+    bosc_indexes: ClassVar[List[Index]] = Field(default_factory=list)
     bosc_json_encoders: ClassVar[Optional[dict]] = None
+    bosc_database: ClassVar[Optional[Database]] = None
 
     @classmethod
     def get_collection(cls) -> Collection:
-        if cls.bosc_collection is None:
+        if cls.bosc_collection_name is None:
             return cls.get_database()[cls.__class__.__name__]
-        return cls.get_database()[cls.bosc_collection]
+        return cls.get_database()[cls.bosc_collection_name]
 
     @classmethod
     def get_database(cls) -> Database:
@@ -136,13 +137,29 @@ class Document(BaseModel, metaclass=CombinedMeta):
         else:
             return cls.get_collection().count(And(*queries))
 
-    @classmethod
-    def update(cls, query, *update) -> None:
-        cls.get_collection().update(query, *update)
+    @staticmethod
+    def _extract_queries(queries):
+        find_queries = [query for query in queries if isinstance(query, Query)]
+        if len(find_queries) == 0:
+            find_query = None
+        elif len(find_queries) == 1:
+            find_query = find_queries[0]
+        else:
+            find_query = And(*find_queries)
+        update_queries = [
+            query for query in queries if isinstance(query, UpdateOperation)
+        ]
+        return find_query, update_queries
 
     @classmethod
-    def update_one(cls, query, *update) -> None:
-        cls.get_collection().update_one(query, *update)
+    def update(cls, *queries) -> None:
+        find_query, update_queries = cls._extract_queries(queries)
+        cls.get_collection().update(find_query, *update_queries)
+
+    @classmethod
+    def update_one(cls, *queries) -> None:
+        find_query, update_queries = cls._extract_queries(queries)
+        cls.get_collection().update_one(find_query, *update_queries)
 
     @classmethod
     def delete_many(cls, *queries) -> None:
