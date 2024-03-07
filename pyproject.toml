@@ -8,6 +8,8 @@ packages = [{include = "pear"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
+
+[tool.poetry.dev-dependencies]
 pytest = "^8.0.2"
 pytest-cov = "^4.1.0"
 
