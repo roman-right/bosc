@@ -2,8 +2,8 @@ from sqlite3 import IntegrityError
 
 import pytest
 
-from pear.collection import OnConflict
-from pear.query.find.comparison import Eq
+from bosc.collection import OnConflict
+from bosc.query.find.comparison import Eq
 
 
 class TestInsert:

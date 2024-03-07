@@ -1,4 +1,4 @@
-from pear.query.update.values import Set, Inc, Now, RemoveField
+from bosc.query.update.values import Inc, Now, RemoveField, Set
 
 __all__ = [
     "Set",

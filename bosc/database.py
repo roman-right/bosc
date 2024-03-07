@@ -2,7 +2,7 @@ import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
 
-from pear.collection import Collection
+from bosc.collection import Collection
 
 
 class Database:

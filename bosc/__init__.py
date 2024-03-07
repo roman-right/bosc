@@ -1,9 +1,9 @@
-from pear.collection import OrderDirection, Collection
-from pear.database import Database
-from pear.document import Document
-from pear.index import Index, IndexType
-from pear.query.find import Eq, Neq, Gt, Gte, Lt, Lte, In, Nin, And, Or
-from pear.query.update import Set, Inc, RemoveField, Now
+from bosc.collection import Collection, OrderDirection
+from bosc.database import Database
+from bosc.document import Document
+from bosc.index import Index, IndexType
+from bosc.query.find import And, Eq, Gt, Gte, In, Lt, Lte, Neq, Nin, Or
+from bosc.query.update import Inc, Now, RemoveField, Set
 
 __all__ = [
     # Coore

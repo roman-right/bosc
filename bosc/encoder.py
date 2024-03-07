@@ -5,6 +5,7 @@ import operator
 import pathlib
 from enum import Enum
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Container,
@@ -12,19 +13,18 @@ from typing import (
     Mapping,
     MutableMapping,
     Optional,
-    Tuple,
     Set,
+    Tuple,
 )
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pydantic
 from pydantic import SecretStr
 
-import pear
+import bosc
 
 if TYPE_CHECKING:
-    from pear import Document
+    from bosc import Document
 
 SingleArgCallable = Callable[[Any], Any]
 DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
@@ -73,7 +73,7 @@ class Encoder:
 
         sub_encoder = Encoder(
             # don't propagate self.exclude to subdocuments
-            custom_encoders=obj.pear_json_encoders,
+            custom_encoders=obj.bosc_json_encoders,
             to_db=self.to_db,
             keep_nulls=self.keep_nulls,
         )
@@ -94,7 +94,7 @@ class Encoder:
         if encoder is not None:
             return encoder(obj)
 
-        if isinstance(obj, pear.Document):
+        if isinstance(obj, bosc.Document):
             return self._encode_document(obj)
         if isinstance(obj, pydantic.RootModel):
             return self.encode(obj.root)

@@ -1,21 +1,31 @@
-[tool.poetry]
-name = "pear"
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "bosc"
 version = "0.0.1"
 description = "A file-based document store with python interface. It uses sqlite3 as backend."
-authors = []
 readme = "README.md"
-packages = [{include = "pear"}]
+requires-python = ">=3.8,<4.0"
+license = { file="LICENSE" }
+authors = [
+    {name = "Roman Right", email = "roman-right@protonmail.com"}
+]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+dependencies = [
+    "pydantic>=2.1",
+]
 
-[tool.poetry.dev-dependencies]
-pytest = "^8.0.2"
-pytest-cov = "^4.1.0"
+[project.optional-dependencies]
+test = [
+    "pre-commit>=2.3.0",
+    "pytest>=6.0.0",
+    "pytest-cov>=2.8.1",
+]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.urls]
+repository = "https://github.com/roman-right/bosc"
 
 [tool.black]
 line-length = 79
@@ -34,35 +44,23 @@ exclude = '''
 )/
 '''
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov-report term-missing --cov=bosc --cov-branch --cov-fail-under=80"
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
 [tool.ruff]
 line-length = 79
-
-# Enable Pyflakes `E` and `F` codes by default.
-select = ["E", "F"]
 ignore = ["E501"]
-
-# Exclude a variety of commonly ignored directories.
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-]
+extend-select = ["I001"]
+fix = true
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
@@ -76,15 +74,3 @@ target-version = "py310"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--cov-report term-missing --cov=pear --cov-branch --cov-fail-under=80"
-testpaths = [
-    "tests",
-]
-filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
-    "ignore::UserWarning",
-]

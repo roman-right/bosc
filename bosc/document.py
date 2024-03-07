@@ -1,15 +1,15 @@
-from typing import ClassVar, Optional, List, TypeVar
+from typing import ClassVar, List, Optional, TypeVar
 from uuid import uuid4
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 
-from pear.collection import Collection, OnConflict, OrderDirection
-from pear.database import Database
-from pear.encoder import get_dict
-from pear.fields import ExpressionField
-from pear.index import Index, IndexType
-from pear.query.find.comparison import Eq
-from pear.query.find.logical import And
+from bosc.collection import Collection, OnConflict, OrderDirection
+from bosc.database import Database
+from bosc.encoder import get_dict
+from bosc.fields import ExpressionField
+from bosc.index import Index, IndexType
+from bosc.query.find.comparison import Eq
+from bosc.query.find.logical import And
 
 BaseModelMetaclass = type(BaseModel)
 
@@ -26,30 +26,30 @@ class CombinedMeta(BaseModelMetaclass):
 # Adjusting MyClass to use the combined metaclass
 class Document(BaseModel, metaclass=CombinedMeta):
     id: UUID4 = Field(default_factory=uuid4)
-    pear_indexes: ClassVar[List[Index]] = Field(default_factory=list)
-    pear_database_path: ClassVar[Optional[str]] = None
-    pear_database: ClassVar[Optional[Database]] = None
-    pear_collection: ClassVar[Optional[str]] = None
-    pear_json_encoders: ClassVar[Optional[dict]] = None
+    bosc_indexes: ClassVar[List[Index]] = Field(default_factory=list)
+    bosc_database_path: ClassVar[Optional[str]] = None
+    bosc_database: ClassVar[Optional[Database]] = None
+    bosc_collection: ClassVar[Optional[str]] = None
+    bosc_json_encoders: ClassVar[Optional[dict]] = None
 
     @classmethod
     def get_collection(cls) -> Collection:
-        if cls.pear_collection is None:
+        if cls.bosc_collection is None:
             return cls.get_database()[cls.__class__.__name__]
-        return cls.get_database()[cls.pear_collection]
+        return cls.get_database()[cls.bosc_collection]
 
     @classmethod
     def get_database(cls) -> Database:
-        if cls.pear_database is None:
-            if cls.pear_database_path is None:
+        if cls.bosc_database is None:
+            if cls.bosc_database_path is None:
                 raise ValueError("Database path is not set")
-            cls.pear_database = Database(cls.pear_database_path)
-        return cls.pear_database
+            cls.bosc_database = Database(cls.bosc_database_path)
+        return cls.bosc_database
 
     @classmethod
     def _get_indexes_to_sync(cls):
         id_index = Index("id", IndexType.UNIQUE)
-        additional_indexes = cls.pear_indexes
+        additional_indexes = cls.bosc_indexes
         return [id_index] + additional_indexes
 
     @classmethod

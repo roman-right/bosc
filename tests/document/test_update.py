@@ -1,5 +1,5 @@
+from bosc import Set
 from tests.document.models import Sample
-from pear import Set
 
 
 class TestUpdate:

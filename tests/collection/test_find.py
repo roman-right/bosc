@@ -1,6 +1,6 @@
-from pear.collection import OrderDirection
-from pear.query.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte, In, Nin
-from pear.query.find.logical import And, Or
+from bosc.collection import OrderDirection
+from bosc.query.find.comparison import Eq, Gt, Gte, In, Lt, Lte, Neq, Nin
+from bosc.query.find.logical import And, Or
 
 
 class TestFind:

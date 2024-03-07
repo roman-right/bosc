@@ -1,5 +1,5 @@
-from pear.encoder import encode
-from pear.query.base import Query
+from bosc.encoder import encode
+from bosc.query.base import Query
 
 
 class ComparisonQuery(Query):

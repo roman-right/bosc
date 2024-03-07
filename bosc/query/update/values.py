@@ -1,5 +1,5 @@
-from pear.encoder import encode
-from pear.query.base import UpdateOperation
+from bosc.encoder import encode
+from bosc.query.base import UpdateOperation
 
 
 class Set(UpdateOperation):

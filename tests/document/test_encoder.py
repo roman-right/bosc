@@ -1,14 +1,14 @@
 import ipaddress
 import pathlib
-from datetime import datetime, date, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from enum import Enum
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, SecretStr
 
-from pear import Document
-from pear.encoder import get_dict
+from bosc import Document
+from bosc.encoder import get_dict
 
 
 class ExampleEnum(Enum):
@@ -46,7 +46,7 @@ class FieldyModel(Document):
         "nested": NestedModel(),
     }
 
-    pear_database_path = "test_db"
+    bosc_database_path = "test_db"
 
 
 class TestEncoder:

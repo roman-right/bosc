@@ -1,6 +1,6 @@
+from bosc import Eq, Gt, Gte, Lt, Lte
+from bosc.collection import OrderDirection
 from tests.document.models import Sample
-from pear import Eq, Gt, Gte, Lt, Lte
-from pear.collection import OrderDirection
 
 
 class TestFind:

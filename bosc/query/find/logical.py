@@ -1,4 +1,4 @@
-from pear.query.base import Query
+from bosc.query.base import Query
 
 
 class LogicalQuery(Query):

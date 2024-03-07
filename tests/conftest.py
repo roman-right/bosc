@@ -1,6 +1,6 @@
 import pytest
 
-from pear.database import Database
+from bosc.database import Database
 
 
 @pytest.fixture

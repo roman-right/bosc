@@ -3,11 +3,11 @@ import logging
 import uuid
 from contextlib import contextmanager
 from enum import Enum
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from pear.index import Index, IndexType
-from pear.query.base import Query, UpdateOperation
-from pear.query.find.comparison import Eq
+from bosc.index import Index, IndexType
+from bosc.query.base import Query, UpdateOperation
+from bosc.query.find.comparison import Eq
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +135,7 @@ class Collection:
                 sql = f"SELECT data FROM {self.collection_name}"
                 query_val = ()
             if order_by:
-                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction}"
+                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction.value}"
             if limit is not None:
                 sql += f" LIMIT {limit}"
             elif offset is not None:
@@ -159,7 +159,7 @@ class Collection:
                 sql = f"SELECT data FROM {self.collection_name}"
                 query_params = []
             if order_by:
-                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction}"
+                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction.value}"
             sql += " LIMIT 1"
 
             cursor.execute(sql, query_params)
