@@ -1,4 +1,4 @@
-[![Bosc](logo/big.svg)](https://raw.githubusercontent.com/roman-right/bosc/main/logo/big.svg)
+[![Bosc](logo/logo.svg)](https://raw.githubusercontent.com/roman-right/bosc/main/logo/logo.svg)
 
 # Bosc
 
@@ -32,6 +32,9 @@ class User(Document):
 
     # Specify the database path for this document
     bosc_database_path = "my_database.db"
+    
+    # Specify the collection name for this document (Optional)
+    bosc_collection_name = "users"
 ```
 
 ### Inserting Documents

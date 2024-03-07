@@ -27,17 +27,17 @@ class CombinedMeta(BaseModelMetaclass):
 # Adjusting MyClass to use the combined metaclass
 class Document(BaseModel, metaclass=CombinedMeta):
     id: UUID4 = Field(default_factory=uuid4)
-    bosc_indexes: ClassVar[List[Index]] = Field(default_factory=list)
     bosc_database_path: ClassVar[Optional[str]] = None
-    bosc_database: ClassVar[Optional[Database]] = None
-    bosc_collection: ClassVar[Optional[str]] = None
+    bosc_collection_name: ClassVar[Optional[str]] = None
+    bosc_indexes: ClassVar[List[Index]] = Field(default_factory=list)
     bosc_json_encoders: ClassVar[Optional[dict]] = None
+    bosc_database: ClassVar[Optional[Database]] = None
 
     @classmethod
     def get_collection(cls) -> Collection:
-        if cls.bosc_collection is None:
+        if cls.bosc_collection_name is None:
             return cls.get_database()[cls.__class__.__name__]
-        return cls.get_database()[cls.bosc_collection]
+        return cls.get_database()[cls.bosc_collection_name]
 
     @classmethod
     def get_database(cls) -> Database:
