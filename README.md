@@ -1,4 +1,4 @@
-[![Bosc](logo/logo.svg)](https://raw.githubusercontent.com/roman-right/bosc/main/logo/logo.svg)
+[![Bosc](https://raw.githubusercontent.com/roman-right/bosc/main/logo/logo.svg)](https://github.com/roman-right/bosc)
 
 # Bosc
 
