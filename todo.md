@@ -1,6 +1,0 @@
-- [x] Test Encoder Types
-- [x] Test Document Methods
-- [x] Document Index creation
-- [ ] Test Document Index Creation
-- [x] Insert many on conflict
-- [x] Test Insert many on conflict
