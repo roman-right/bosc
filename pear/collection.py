@@ -135,7 +135,7 @@ class Collection:
                 sql = f"SELECT data FROM {self.collection_name}"
                 query_val = ()
             if order_by:
-                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction}"
+                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction.value}"
             if limit is not None:
                 sql += f" LIMIT {limit}"
             elif offset is not None:
@@ -159,7 +159,7 @@ class Collection:
                 sql = f"SELECT data FROM {self.collection_name}"
                 query_params = []
             if order_by:
-                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction}"
+                sql += f" ORDER BY json_extract(data, '$.{order_by}') {order_direction.value}"
             sql += " LIMIT 1"
 
             cursor.execute(sql, query_params)
