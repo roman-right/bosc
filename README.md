@@ -19,15 +19,6 @@ pip install bosc
 
 ## Quickstart
 
-### Setting Up Your Database
-
-```python
-from bosc.database import Database
-
-# Initialize the database. This creates a new SQLite file if it doesn't exist.
-db = Database("my_database.db")
-```
-
 ### Defining a Document Model
 
 ```python
