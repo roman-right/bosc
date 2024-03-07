@@ -1,8 +1,6 @@
-- [ ] Test Encoder Types
-- [ ] Test Document Methods
-- [ ] Document Index creation
+- [x] Test Encoder Types
+- [x] Test Document Methods
+- [x] Document Index creation
 - [ ] Test Document Index Creation
-- [ ] Insert many on conflict
-- [ ] Test Insert many on conflict
-- [ ] Insert Many Returning
-- [ ] Test Insert Many Returning
+- [x] Insert many on conflict
+- [x] Test Insert many on conflict

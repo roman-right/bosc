@@ -1,4 +1,4 @@
-from ossus.queries.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte, In
+from pear.query.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte
 
 
 class ExpressionField:
@@ -30,6 +30,3 @@ class ExpressionField:
 
     def __le__(self, other):
         return Lte(self.attr_name, other)
-
-    def __contains__(self, other):
-        return In(self.attr_name, other)

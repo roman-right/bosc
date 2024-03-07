@@ -19,11 +19,12 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 import pydantic
+from pydantic import SecretStr
 
-import ossus
+import pear
 
 if TYPE_CHECKING:
-    from ossus import Document
+    from pear import Document
 
 SingleArgCallable = Callable[[Any], Any]
 DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
@@ -42,6 +43,7 @@ DEFAULT_CUSTOM_ENCODERS: MutableMapping[type, SingleArgCallable] = {
     Enum: operator.attrgetter("value"),
     UUID: str,
     bytes: lambda b: b.decode(),
+    SecretStr: lambda s: s.get_secret_value(),
 }
 
 SCALAR_TYPES = (
@@ -92,7 +94,7 @@ class Encoder:
         if encoder is not None:
             return encoder(obj)
 
-        if isinstance(obj, ossus.Document):
+        if isinstance(obj, pear.Document):
             return self._encode_document(obj)
         if isinstance(obj, pydantic.RootModel):
             return self.encode(obj.root)
@@ -139,10 +141,20 @@ def get_dict(
     to_db: bool = False,
     exclude: Optional[Set[str]] = None,
     keep_nulls: bool = True,
-):
+) -> Mapping[str, Any]:
     if exclude is None:
         exclude = set()
     if document.id is None:
         exclude.add("id")
     encoder = Encoder(exclude=exclude, to_db=to_db, keep_nulls=keep_nulls)
     return encoder.encode(document)
+
+
+def encode(
+    obj: Any,
+    exclude: Optional[Set[str]] = None,
+    to_db: bool = False,
+    keep_nulls: bool = True,
+) -> Any:
+    encoder = Encoder(exclude=exclude, to_db=to_db, keep_nulls=keep_nulls)
+    return encoder.encode(obj)

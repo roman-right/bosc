@@ -1,10 +1,11 @@
-from ossus.queries.base import UpdateOperation
+from pear.encoder import encode
+from pear.query.base import UpdateOperation
 
 
 class Set(UpdateOperation):
     def __init__(self, field, value):
-        self.field = field
-        self.value = value
+        self.field = encode(field)
+        self.value = encode(value)
 
     def to_sql_update(self):
         return f"json_set(data, '$.{self.field}', ?)", [self.value]

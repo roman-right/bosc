@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "ossus"
-version = "0.1.0"
-description = ""
+name = "pear"
+version = "0.0.1"
+description = "A file-based document store with python interface. It uses sqlite3 as backend."
 authors = []
 readme = "README.md"
-packages = [{include = "SmallDoc"}]
+packages = [{include = "pear"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
@@ -77,7 +77,7 @@ max-complexity = 10
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--cov-report term-missing --cov=ossus --cov-branch --cov-fail-under=80"
+addopts = "--cov-report term-missing --cov=pear --cov-branch --cov-fail-under=80"
 testpaths = [
     "tests",
 ]

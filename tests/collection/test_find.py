@@ -1,6 +1,6 @@
-from ossus.collection import OrderDirection
-from ossus.queries.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte, In, Nin
-from ossus.queries.find.logical import And, Or
+from pear.collection import OrderDirection
+from pear.query.find.comparison import Eq, Neq, Gt, Gte, Lt, Lte, In, Nin
+from pear.query.find.logical import And, Or
 
 
 class TestFind:
@@ -159,3 +159,16 @@ class TestFindOne:
     def test_find_all(self, collection, documents):
         result = collection.find_one()
         assert result["name"] == "John"
+
+    def test_offset(self, collection, documents):
+        result = collection.find(Eq("name", "John"), offset=1)
+        assert len(result) == 1
+        assert result[0]["age"] == 40
+
+    def test_limit(self, collection, documents):
+        result = collection.find(Eq("name", "John"), limit=1)
+        assert len(result) == 1
+        assert result[0]["age"] == 25
+        result = collection.find(Eq("name", "John"), limit=1, offset=1)
+        assert len(result) == 1
+        assert result[0]["age"] == 40

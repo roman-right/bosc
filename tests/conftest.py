@@ -1,6 +1,6 @@
 import pytest
 
-from ossus.database import Database
+from pear.database import Database
 
 
 @pytest.fixture
@@ -13,10 +13,10 @@ def cleanup(db):
     db.drop_all_collections()
     db.drop_all_indexes()
     yield
-    # db.drop_all_collections()
-    # db.drop_all_indexes()
+    db.drop_all_collections()
+    db.drop_all_indexes()
 
 
 @pytest.fixture
 def conn():
-    return Database("test_db").conn
+    return Database("test_db").connection

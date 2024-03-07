@@ -8,7 +8,9 @@ class IndexType(str, Enum):
 
 
 class Index:
-    def __init__(self, index_type: IndexType, value, name=None):
+    def __init__(
+        self, value, index_type: IndexType = IndexType.PATH, name=None
+    ):
         self.index_type = index_type
         self.value = value
         self.name = name or self.generate_name()

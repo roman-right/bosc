@@ -1,4 +1,4 @@
-from ossus.queries.base import Query
+from pear.query.base import Query
 
 
 class LogicalQuery(Query):
