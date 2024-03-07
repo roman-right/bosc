@@ -1,4 +1,4 @@
-from pear.index import Index, IndexType
+from bosc.index import Index, IndexType
 
 
 class TestIndexes:

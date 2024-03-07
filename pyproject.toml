@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "pear"
+name = "bosc"
 version = "0.0.1"
 description = "A file-based document store with python interface. It uses sqlite3 as backend."
 readme = "README.md"
@@ -25,7 +25,7 @@ test = [
 ]
 
 [project.urls]
-repository = "https://github.com/roman-right/pear"
+repository = "https://github.com/roman-right/bosc"
 
 [tool.black]
 line-length = 79
@@ -46,7 +46,7 @@ exclude = '''
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--cov-report term-missing --cov=pear --cov-branch --cov-fail-under=80"
+addopts = "--cov-report term-missing --cov=bosc --cov-branch --cov-fail-under=80"
 testpaths = [
     "tests",
 ]

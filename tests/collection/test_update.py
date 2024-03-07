@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from pear.query.find.comparison import Eq
-from pear.query.update.values import Inc, Now, RemoveField, Set
+from bosc.query.find.comparison import Eq
+from bosc.query.update.values import Inc, Now, RemoveField, Set
 
 
 class TestUpdate:

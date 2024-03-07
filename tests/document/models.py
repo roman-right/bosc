@@ -1,8 +1,8 @@
-from pear import Document
+from bosc import Document
 
 
 class Sample(Document):
     name: str
     age: int
 
-    pear_database_path = "test_db"
+    bosc_database_path = "test_db"

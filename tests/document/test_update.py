@@ -1,4 +1,4 @@
-from pear import Set
+from bosc import Set
 from tests.document.models import Sample
 
 

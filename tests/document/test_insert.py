@@ -2,15 +2,15 @@ from sqlite3 import IntegrityError
 
 import pytest
 
-from pear import Document
-from pear.collection import OnConflict
+from bosc import Document
+from bosc.collection import OnConflict
 
 
 class Sample(Document):
     name: str
     age: int
 
-    pear_database_path = "test_db"
+    bosc_database_path = "test_db"
 
 
 class TestDocumentInsert:

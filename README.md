@@ -1,39 +1,45 @@
-![Pear](logo/big.svg)
+![Bosc](logo/big.svg)
 
-# Pear Document Store Usage Guide
+# Bosc
 
 ## Introduction
-The Pear Document Store provides a lightweight, Pythonic interface for interacting with documents stored in an SQLite database. It supports basic CRUD operations, querying with various conditions, and working with indexes for improved query performance.
+The Bosc Document Store provides a lightweight, Pythonic interface for interacting with JSON documents stored in an SQLite database. It supports basic CRUD operations, querying with various conditions, and working with indexes for improved query performance.
+
+Bosc uses Pydantic to 
+
 
 ## Installation
 Before you begin, ensure you have Python installed on your system. This document store requires Python 3.8 or newer.
 
-To use the Pear Document Store, you'll first need to include it in your Python project. If the Pear package is available via a package manager (like pip), you can install it using:
+To use the Bosc Document Store, you'll first need to include it in your Python project. If the Bosc package is available via a package manager (like pip), you can install it using:
 
 ```
-pip install pear
+pip install bosc
 ```
 
 ## Quickstart
 
 ### Setting Up Your Database
+
 ```python
-from pear.database import Database
+from bosc.database import Database
 
 # Initialize the database. This creates a new SQLite file if it doesn't exist.
 db = Database("my_database.db")
 ```
 
 ### Defining a Document Model
+
 ```python
-from pear import Document
+from bosc import Document
+
 
 class User(Document):
     name: str
     age: int
 
     # Specify the database path for this document
-    pear_database_path = "my_database.db"
+    bosc_database_path = "my_database.db"
 ```
 
 ### Inserting Documents
@@ -107,23 +113,23 @@ class User(Document):
     name: str
     age: int
 
-    pear_indexes = [
+    bosc_indexes = [
         Index("name", IndexType.PATH),
         Index("age", IndexType.PATH),
     ]
-    pear_database_path = "my_database.db"
+    bosc_database_path = "my_database.db"
 
 # Sync indexes with the database
 User.sync_indexes()
 ```
 
-This will create indexes on the `name` and `age` fields of the `User` documents, assuming `Index` and `IndexType` are properly defined and imported from the `pear` package.
+This will create indexes on the `name` and `age` fields of the `User` documents, assuming `Index` and `IndexType` are properly defined and imported from the `bosc` package.
 
 ### Complex Queries
-Leverage the full power of SQL queries with complex conditions and ordering.
+Leverage the full power of queries with complex conditions and ordering.
 
 ```python
-from pear import And, Or, Eq, Gt
+from bosc import And, Or, Eq, Gt
 
 # Find users named John Doe over 30 years old
 users = User.find(And(User.name == "John Doe", User.age > 30))

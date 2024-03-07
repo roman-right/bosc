@@ -1,11 +1,11 @@
-from pear import Document, Index, IndexType
+from bosc import Document, Index, IndexType
 
 
 class Sample(Document):
     name: str
     age: int
-    pear_database_path = "test_db"
-    pear_indexes = [
+    bosc_database_path = "test_db"
+    bosc_indexes = [
         Index("name", IndexType.UNIQUE),
         Index("age"),
     ]
