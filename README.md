@@ -132,13 +132,3 @@ users = User.find(Or(User.name == "Alice", User.age < 25))
 # Order users by age
 users = User.find(order_by="age", order_direction=OrderDirection.ASC)
 ```
-
-## Testing
-To ensure reliability, extensive tests cover the core functionalities of the document store, including CRUD operations, indexing, and complex queries.
-
-Please refer to the provided test suites for examples on how to write tests for your models and queries.
-
-## Conclusion
-The Pear Document Store provides a flexible and powerful way to work with document-oriented data in Python, backed by the simplicity and reliability of SQLite. By following this guide, you can easily integrate it into your projects and leverage its features to manage your application's data efficiently.
-
-For further details, consult the Pear Document Store's API documentation and the source code of the library.
