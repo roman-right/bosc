@@ -4,13 +4,20 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "bosc"
-version = "0.0.1"
-description = "A file-based document store with python interface. It uses sqlite3 as backend."
+version = "0.0.2"
+description = "A file-based document store with python interface"
 readme = "README.md"
 requires-python = ">=3.8,<4.0"
 license = { file="LICENSE" }
 authors = [
     {name = "Roman Right", email = "roman-right@protonmail.com"}
+]
+keywords = [
+    "document store",
+    "file-based",
+    "python",
+    "pydantic",
+    "sqlite",
 ]
 
 dependencies = [
