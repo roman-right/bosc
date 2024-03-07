@@ -3,10 +3,10 @@
 # Bosc
 
 ## Introduction
-The Bosc Document Store provides a lightweight, Pythonic interface for interacting with JSON documents stored in an SQLite database. It supports basic CRUD operations, querying with various conditions, and working with indexes for improved query performance.
+Bosc is a document store that provides an easy, Pythonic interface for handling documents stored on the local file system. It utilizes the full power of SQLite for storing and querying documents and employs Pydantic as the parsing and validation engine, ensuring it works seamlessly within the modern Python ecosystem, including FastAPI.
 
-Bosc uses Pydantic to 
 
+> ⚠️ Bosc is not an ORM for SQLite. It is a document-oriented store that uses SQLite as a backend. It is not designed to replace traditional SQL databases, but rather to provide a simple, Pythonic interface for working with flexible documents.
 
 ## Installation
 Before you begin, ensure you have Python installed on your system. This document store requires Python 3.8 or newer.
