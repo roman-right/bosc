@@ -107,7 +107,6 @@ class Encoder:
                 for key, value in obj.items()
             }
         if isinstance(obj, Iterable) and not isinstance(obj, (str, bytes)):
-            print(obj)
             return [self.encode(value) for value in obj]
 
         raise ValueError(f"Cannot encode {obj!r}")
