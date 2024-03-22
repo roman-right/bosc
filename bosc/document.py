@@ -36,7 +36,7 @@ class Document(BaseModel, metaclass=CombinedMeta):
     @classmethod
     def get_collection(cls) -> Collection:
         if cls.bosc_collection_name is None:
-            return cls.get_database()[cls.__class__.__name__]
+            return cls.get_database()[cls.__name__]
         return cls.get_database()[cls.bosc_collection_name]
 
     @classmethod
