@@ -5,7 +5,7 @@ from bosc.index import Index, IndexType
 from bosc.query.find import And, Eq, Gt, Gte, In, Lt, Lte, Neq, Nin, Or
 from bosc.query.update import Inc, Now, RemoveField, Set
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __all__ = [
     # Coore
     "Database",
