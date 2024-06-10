@@ -1,7 +1,7 @@
 from bosc.query.find.comparison import Eq, Gt, Gte, Lt, Lte, Neq
 
 
-class ExpressionField:
+class ExpressionField(str):
     def __init__(self, attr_name):
         self.attr_name = attr_name
 
